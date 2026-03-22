@@ -10,9 +10,15 @@ FILE_NAME_WITH_EXTENSION=$(basename "$FILE_PATH")
 FILE_NAME="${FILE_NAME_WITH_EXTENSION%.*}"
 extension="${FILE_NAME_WITH_EXTENSION##*.}"
 
-if [ "$extension" = "mov" ]; then
-    ffmpeg -i "$FILE_PATH" -f mp4 "${FILE_NAME}.mp4"
-else
+if [ "$extension" != "mov" ]; then
     echo "Error: \"$FILE_NAME_WITH_EXTENSION\" does not have a .mov extension." >&2
     exit 1
+fi
+
+OUTPUT_FILE="${PWD}/${FILE_NAME}.mp4"
+
+if ffmpeg -i "$FILE_PATH" -f mp4 "$OUTPUT_FILE"; then
+    echo "Successfully converted to MP4: ${OUTPUT_FILE}"
+else
+    exit $?
 fi
